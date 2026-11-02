@@ -28,6 +28,13 @@ npx skills add dingxiaopi/agent-skills --skill open-source-release -g
 
 在功能不变的前提下，降低部署在 Cloudflare（Workers、D1、R2、KV、Cache API）上的项目的费用。已上线的项目看真实用量数据，还没上线的项目检查代码和本地数据库。
 
+附带两个只读脚本，只需 Node 18+，macOS、Linux、Windows 通用：
+
+- `cf-usage.mjs`：拉取账户的用量，也能拆开看单个 Worker 每天、每个版本、每小时的 CPU。
+- `tail-summary.mjs`：实时采样几分钟请求，看 CPU 花在哪些路径和客户端上。
+
+可以直接用 `wrangler login` 的登录令牌，不用另外申请。
+
 **适用场景：**
 
 - 想知道账单主要花在哪里

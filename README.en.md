@@ -28,6 +28,13 @@ Once installed, describe what you need in plain language and your agent will pic
 
 Lowers the cost of projects on Cloudflare (Workers, D1, R2, KV, Cache API) without changing what they do. For live projects it works from real usage data; for unreleased ones it reviews the code and local database.
 
+It comes with two read-only scripts. They need only Node 18+ and run on macOS, Linux and Windows:
+
+- `cf-usage.mjs` pulls account usage, and can break a single Worker's CPU down by day, deployed version and hour.
+- `tail-summary.mjs` samples live requests for a few minutes and shows which paths and clients use the CPU.
+
+They can use your `wrangler login` token, so you don't need a separate API token.
+
 **Use when:**
 
 - You want to know where your bill is coming from

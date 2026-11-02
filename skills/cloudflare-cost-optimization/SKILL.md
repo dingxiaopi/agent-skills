@@ -48,7 +48,41 @@ description: "Cloudflare 成本优化：在功能不变的前提下，把部署�
    - **有超额**：从花钱最多的一项开始处理，每项改动都估算能省多少钱。
    - **都在额度内**：如实告诉用户现在没有多花钱。只修明显的 bug（比如每个请求都多跑几条查询）和增长很快、快要超额的项，其余列出来，写明到什么用量再做，**不继续为优化而优化**。
 
-### 第二步：确认拿得到数据
+### 第二步：拉数据
+
+先用自带的两个脚本，在 `scripts/` 下。它们是只读的，只用 Node 18+ 自带的功能，macOS、Linux、Windows 都能运行。在项目目录里运行，脚本才能用上项目里安装的 wrangler。
+
+```bash
+node <skill目录>/scripts/cf-usage.mjs usage --since <计费周期开始日>     # 全账户：Workers、D1、R2、KV 用量
+node <skill目录>/scripts/cf-usage.mjs worker <Worker名> --since <日期>   # 单个 Worker：按天、按版本、按结果、按小时
+node <skill目录>/scripts/tail-summary.mjs <Worker名> --seconds 300       # 实时采样 5 分钟：CPU 花在哪些路径、哪些客户端
+```
+
+- **没有登录时**：脚本提示找不到令牌时，请用户自己做以下任一项，再重跑脚本：
+  - 运行 `npx wrangler login`，在打开的浏览器页面里登录 Cloudflare 并点“允许”；
+  - 在控制台创建只读的 API 令牌，权限选 Account Analytics Read，设到环境变量里。
+
+  授权必须由用户本人完成：不要代替用户输入 Cloudflare 账号密码，也不要让用户把令牌粘贴到对话里。
+- **令牌**：优先用环境变量 `CLOUDFLARE_API_TOKEN`，需要 Account Analytics Read 权限；没有就用本机 `wrangler login` 存下的登录令牌，不用另外申请。登录令牌约 1 小时过期，脚本提示过期时，让用户运行一次 `npx wrangler whoami` 刷新。账号有多个时，加 `--account <id>`。
+- **计费周期**：`--since` 填本期开始日。开始日看控制台账单页（续订日），不要默认用自然月。脚本只给出用量，包含额度和单价按第 0 节去价格页查。
+- **代理**：Node 自带的 fetch 不读代理环境变量。设了 `HTTPS_PROXY` 时，脚本会借用项目里 wrangler 自带的 undici 走代理；也可以用 Node 24+ 加 `NODE_USE_ENV_PROXY=1`。
+- **怎么读 `worker` 的结果**：
+  - 按版本看每次请求的平均 CPU，某次发版后突然变高，问题多半出在那次发版。
+  - 每小时 CPU 平稳、请求数却忽高忽低，说明有持续的后台负载，常见原因是爬虫在抓没缓存的页面。
+  - 免费版单次 CPU 上限只有 10 ms，升级前的数字会偏低，前后不能直接比。
+- **怎么读 `tail-summary` 的结果**：
+  - 看每类路径的 CPU 占比和“不同网址数 / 请求数”。两者接近，说明访问很少重复，页面缓存帮不上忙，要从降低单次渲染成本入手。
+  - 很多不同省份的住宅网络、用浏览器 UA 挨个翻同一类页面，像分布式抓取，按 IP 限流挡不住。
+  - 采样只看比例，不要外推成精确的月度数字。
+  - 原始事件含 IP 和请求头，脚本默认不保存；加 `--save` 才保存，保存的文件不要外传。
+- **GraphQL 的坑**：
+  - 查询太频繁会报 “budget depleted”，要等约 5 分钟，所以尽量合并成一次查询。
+  - 维度和字段以报错提示为准，比如 Workers 数据集没有 `datetime` 维度。
+  - 自适应数据集只能回看有限天数。
+- **wrangler 登录令牌查不了 Observability 接口**（返回 403）。按路径、UA 分组要用有权限的 API 令牌、控制台页面，或上面的 `tail-summary`。
+- **测缓存时看 `cf-ray` 结尾的机房代码**：缓存按数据中心分别存，代理或网络切换机房后，第一次 MISS 是正常的，不能据此判断缓存没生效。
+
+如果脚本报错，或者需要脚本没覆盖的数据，再按下面的方式手动查：
 
 - **日志要先开启**：Workers Logs 需要在 wrangler 配置里设 `observability.enabled: true`，否则查不到请求明细。开启并部署后才开始积累，只保留数天（当前期限看官方文档），日志量也计费。没开就告诉用户，由用户决定是否开启。
 - **没有浏览器时用接口**：GraphQL Analytics API（`POST https://api.cloudflare.com/client/v4/graphql`，令牌需要 Account Analytics Read 权限）：
@@ -72,6 +106,7 @@ wrangler d1 insights <DB> --timePeriod 7d --sort-type avg --sort-by time --limit
 
 ### 第四步：Workers 请求从哪来
 
+- 先跑 `tail-summary.mjs` 看比例；需要更长时间范围再用下面两种。
 - 控制台 Worker「指标」：调用次数、CPU、错误；静态资源请求单独统计。
 - Observability（控制台 Workers → Observability，或 `POST /accounts/{account_id}/workers/observability/telemetry/query`）按字段分组计数：
   - `$workers.event.request.url`（用 `includes` 过滤路径前缀；`$workers.event.request.path` 常为空）
