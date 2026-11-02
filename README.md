@@ -1,10 +1,10 @@
 # agent-skills
 
+中文 | [English](README.en.md)
+
 让 AI 编程工具按一套固定流程，帮你降低 Cloudflare 费用、安全地开源项目。
 
 技能遵循 [Agent Skills](https://agentskills.io/) 格式，可用于 Claude Code、Codex、Cursor 等支持该格式的工具。技能内容为中文。
-
-Agent skills for cutting Cloudflare costs and publishing open source projects safely. Skill content is written in Chinese.
 
 ## 安装
 
@@ -56,7 +56,8 @@ npx skills add dingxiaopi/agent-skills --skill open-source-release -g
 skills/
 └── <技能名>/
     ├── SKILL.md      # 触发条件和主要规则
-    └── references/   # 需要时才读取的参考资料
+    ├── references/   # 需要时才读取的参考资料
+    └── scripts/      # 技能自带的脚本（部分技能有）
 ```
 
 部分结论来自单个项目的实测，已在技能中标明。用在自己的项目前，请先按技能里的方法复核。
