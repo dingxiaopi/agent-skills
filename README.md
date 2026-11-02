@@ -1,36 +1,65 @@
 # agent-skills
 
-通用的 AI agent 技能合集。每个技能是一个文件夹，入口是标准的 `SKILL.md`（开头 `name` / `description`，下面是正文），不绑定任何一家工具。
+让 AI 编程工具按一套固定流程，帮你降低 Cloudflare 费用、安全地开源项目。
 
-A collection of tool-agnostic agent skills. Each skill is a folder with a standard `SKILL.md`; written in Chinese.
+技能遵循 [Agent Skills](https://agentskills.io/) 格式，可用于 Claude Code、Codex、Cursor 等支持该格式的工具。技能内容为中文。
 
-## 技能列表
+Agent skills for cutting Cloudflare costs and publishing open source projects safely. Skill content is written in Chinese.
 
-| 技能 | 用途 |
-|---|---|
-| [cloudflare-cost-optimization](skills/cloudflare-cost-optimization/SKILL.md) | Cloudflare 成本优化：功能不变、费用最低，顺带提升性能；已上线看真实数据，未上线做提前检查 |
-| [open-source-release](skills/open-source-release/SKILL.md) | 开源发布规范：公开前的安全检查（提交邮箱、密钥、第三方授权）、README 和演示素材、仓库门面、发布后验证 |
+## 安装
 
-## 使用方法
-
-**支持 `SKILL.md` 的 agent 工具**：把需要的技能文件夹复制或软链接到该工具的技能目录（各工具目录不同，以其文档为准）。例如 Claude Code 是 `~/.claude/skills/`：
+需要 Node.js 22.20 或更高版本。在项目目录运行，然后选择要装的技能和工具：
 
 ```bash
-git clone <本仓库地址> ~/agent-skills
-ln -s ~/agent-skills/skills/cloudflare-cost-optimization ~/.claude/skills/cloudflare-cost-optimization
+npx skills add dingxiaopi/agent-skills
 ```
 
-**其他 agent**：在项目的 `AGENTS.md`（或该工具读取的说明文件）里加一句，让它在相关任务时先读对应的 `SKILL.md`：
+只装一个技能，并让它在所有项目里可用：
 
-```markdown
-做 Cloudflare 成本优化时，先读 ~/agent-skills/skills/cloudflare-cost-optimization/SKILL.md
+```bash
+npx skills add dingxiaopi/agent-skills --skill open-source-release -g
 ```
 
-## 约定
+装好后直接用自然语言提出需求，工具会自动选用对应的技能。
 
-- 一个技能一个文件夹：`SKILL.md` 放主要规则，较长的案例或参考资料放 `references/`。
-- 内容来自真实项目的实测；单次测量的结论写明“实测”并附验证方法，使用前请在自己的项目里复核。
-- 不包含任何密钥、账号或私有项目信息。
+## 技能
+
+### cloudflare-cost-optimization
+
+在功能不变的前提下，降低部署在 Cloudflare（Workers、D1、R2、KV、Cache API）上的项目的费用。已上线的项目看真实用量数据，还没上线的项目检查代码和本地数据库。
+
+**适用场景：**
+
+- 想知道账单主要花在哪里
+- D1 读取量、Workers 请求量或 CPU 时间偏高
+- 页面慢、静态文件误走 Worker、爬虫流量大
+- 上线前检查，或上线新功能后确认有没有性能问题
+
+**可以这样说：** “查一下这个项目的 Cloudflare 用量和费用”
+
+### open-source-release
+
+把项目整理成可以放心公开的仓库。公开前检查全部 git 历史，再补齐 README、演示素材和仓库设置，发布后用陌生人的视角验证一遍。
+
+**适用场景：**
+
+- 准备开源项目，或把私有仓库改成公开
+- 想检查提交邮箱、密钥、私人信息和第三方内容授权
+- 写或重写 README，仓库看起来不够专业
+- 发布后确认链接、图片和构建步骤都正常
+
+**可以这样说：** “帮我开源这个项目，发布前先检查一遍”
+
+## 技能结构
+
+```text
+skills/
+└── <技能名>/
+    ├── SKILL.md      # 触发条件和主要规则
+    └── references/   # 需要时才读取的参考资料
+```
+
+部分结论来自单个项目的实测，已在技能中标明。用在自己的项目前，请先按技能里的方法复核。
 
 ## 许可证
 

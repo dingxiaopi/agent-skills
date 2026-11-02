@@ -1,6 +1,6 @@
 ---
 name: open-source-release
-description: 开源发布规范：把一个项目整理成专业、安全、别人愿意点开的公开仓库。覆盖公开前的安全检查（提交邮箱、密钥、私人信息、第三方授权）、许可证、README 和演示素材、仓库门面（Topics、分享预览图）、发布后验证。适用于：准备开源或公开仓库、新建开源项目、想让仓库看起来更专业、写或重写 README、发布前检查。用户说“开源这个项目”“公开仓库”“README 太简陋”“仓库看着很 low”“发布前帮我查一下”时使用。Open source release checklist: pre-publication safety, licensing, README, demo assets, repo presentation, post-release verification.
+description: "开源发布规范：把一个项目整理成专业、安全、别人愿意点开的公开仓库。覆盖公开前的安全检查（提交邮箱、密钥、私人信息、第三方授权）、许可证、README 和演示素材、仓库门面（Topics、分享预览图）、发布后验证。适用于：准备开源或公开仓库、新建开源项目、想让仓库看起来更专业、写或重写 README、发布前检查。用户说“开源这个项目”“公开仓库”“README 太简陋”“仓库看着很 low”“发布前帮我查一下”时使用。Open source release checklist: pre-publication safety, licensing, README, demo assets, repo presentation, post-release verification."
 ---
 
 # 开源发布规范

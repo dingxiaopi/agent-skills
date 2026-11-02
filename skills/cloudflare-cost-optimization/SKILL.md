@@ -1,6 +1,6 @@
 ---
 name: cloudflare-cost-optimization
-description: Cloudflare 成本优化：在功能不变的前提下，把部署在 Cloudflare（Workers / D1 / R2 / KV / Cache API）上的项目的费用降到最低，顺带提升性能。已上线的项目用真实用量数据找出最贵、最慢的请求和查询；还没上线的项目从代码和本地数据库提前检查。适用于：想知道账单从哪来、D1 读取量偏高、Workers 请求量或 CPU 偏高、页面慢、静态文件误走 Worker、爬虫流量大、上线前做一次检查、上线新功能后确认有没有性能问题。用户说“查一下 Cloudflare 用量/费用/性能”“D1 读取太多”“有没有无意义查询”“上线前帮我看看 Cloudflare 开销”时使用。Cloudflare cost optimization for Workers/D1/R2, with performance as a side benefit: requests, CPU, D1 rows read/written, caching, static assets, bot traffic, pre-launch review.
+description: "Cloudflare 成本优化：在功能不变的前提下，把部署在 Cloudflare（Workers / D1 / R2 / KV / Cache API）上的项目的费用降到最低，顺带提升性能。已上线的项目用真实用量数据找出最贵、最慢的请求和查询；还没上线的项目从代码和本地数据库提前检查。适用于：想知道账单从哪来、D1 读取量偏高、Workers 请求量或 CPU 偏高、页面慢、静态文件误走 Worker、爬虫流量大、上线前做一次检查、上线新功能后确认有没有性能问题。用户说“查一下 Cloudflare 用量/费用/性能”“D1 读取太多”“有没有无意义查询”“上线前帮我看看 Cloudflare 开销”时使用。Cloudflare cost optimization for Workers/D1/R2, with performance as a side benefit: requests, CPU, D1 rows read/written, caching, static assets, bot traffic, pre-launch review."
 ---
 
 # Cloudflare 成本优化
